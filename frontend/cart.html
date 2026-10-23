@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart - BurjoGo</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-logo">BurjoGo</div>
+    <ul class="nav-menu">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="menu.html">Menu</a></li>
+        <li><a href="cart.html" class="active">Keranjang</a></li>
+    </ul>
+    <div class="nav-right">
+        <a href="cart.html" class="cart-icon">
+            <i data-feather="shopping-cart"></i>
+            <span id="cart-count">0</span>
+        </a>
+    </div>
+</nav>
+
+<div class="main-content">
+    <h1 class="page-title">Keranjang Kamu</h1>
+    
+    <div id="cart-container"></div>
+    <h2 id="total">Total: Rp 0</h2>
+
+    <div style="text-align: center;">
+        <button id="btn-checkout" onclick="goToCheckout()" class="btn" style="margin: 20px auto;">
+            Lanjut ke Checkout
+        </button>
+    </div>
+</div>
+
+<footer>
+    <p>© 2026 BurjoGo - Sistem Pemesanan Online</p>
+</footer>
+
+<script src="app.js"></script>
+<script>
+feather.replace();
+
+function renderCartItems() {
+    let container = document.getElementById("cart-container");
+    let totalElement = document.getElementById("total");
+    let btnCheckout = document.getElementById("btn-checkout");
+    let total = 0;
+
+    container.innerHTML = "";
+
+    if(cart.length === 0) {
+        container.innerHTML = "<p style='text-align:center; padding: 20px;'>Keranjang kamu masih kosong.</p>";
+        totalElement.innerText = "Total: Rp 0";
+        btnCheckout.style.display = "none";
+        return;
+    }
+
+    btnCheckout.style.display = "block";
+
+    cart.forEach((item, index) => {
+        let subtotal = item.harga * item.qty;
+        total += subtotal;
+
+        container.innerHTML += `
+            <div class="cart-card">
+                <div>
+                    <h3>${item.nama}</h3>
+                    <p style="color: #ff7b00; font-weight:500;">Rp ${item.harga.toLocaleString('id-ID')}</p>
+                </div>
+                <div style="text-align: right;">
+                    <p>Qty: <strong>${item.qty}</strong></p>
+                    <p>Subtotal: <strong>Rp ${subtotal.toLocaleString('id-ID')}</strong></p>
+                    <button onclick="removeItem(${index})" style="background:none; border:none; color:red; cursor:pointer; font-size:0.85rem; margin-top:5px;">Hapus</button>
+                </div>
+            </div>
+        `;
+    });
+
+    totalElement.innerText = "Total: Rp " + total.toLocaleString('id-ID');
+}
+
+function removeItem(index) {
+    cart.splice(index, 1);
+    localStorage.setItem("cart", JSON.stringify(cart));
+    renderCartItems();
+    updateCartCount();
+}
+
+function goToCheckout() {
+    window.location.href = "checkout.html";
+}
+
+// Jalankan fungsi render saat halaman dibuka
+renderCartItems();
+</script>
+</body>
+</html>

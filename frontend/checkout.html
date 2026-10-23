@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout Dine-In - BurjoGo</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-logo">BurjoGo</div>
+    <ul class="nav-menu">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="menu.html">Menu</a></li>
+        <li><a href="cart.html">Keranjang</a></li>
+    </ul>
+    <div class="nav-right">
+        <a href="cart.html" class="cart-icon">
+            <i data-feather="shopping-cart"></i>
+            <span id="cart-count">0</span>
+        </a>
+    </div>
+</nav>
+
+<div class="main-content">
+    <h1 class="page-title">Konfirmasi Pesanan (Dine-In)</h1>
+
+    <div class="form-container" id="checkout-box">
+        <form id="orderForm" onsubmit="processOrder(event)">
+            <div class="form-group">
+                <label for="nama">Atas Nama</label>
+                <input type="text" id="nama" required placeholder="Masukkan nama kamu">
+            </div>
+            <div class="form-group">
+                <label for="meja">Nomor Meja</label>
+                <input type="number" id="meja" min="1" max="50" required placeholder="Contoh: 05, 12">
+            </div>
+            <div class="form-group">
+                <label for="catatan">Catatan Tambahan (Opsional)</label>
+                <textarea id="catatan" rows="3" placeholder="Contoh: Es teh manisnya dikit aja, mi goreng agak pedas"></textarea>
+            </div>
+            <button type="submit" class="btn" style="width: 100%; margin-top:10px;">Pesan Sekarang</button>
+        </form>
+    </div>
+</div>
+
+<footer>
+    <p>© 2026 BurjoGo - Sistem Pemesanan Online</p>
+</footer>
+
+<script src="app.js"></script>
+<script>
+feather.replace();
+
+// Proteksi jika keranjang kosong
+if (cart.length === 0) {
+    alert("Keranjang Anda kosong! Silakan pilih menu terlebih dahulu.");
+    window.location.href = "menu.html";
+}
+
+function processOrder(event) {
+    event.preventDefault();
+
+    let nama = document.getElementById("nama").value;
+    let meja = document.getElementById("meja").value;
+    let catatan = document.getElementById("catatan").value || "-";
+
+    let totalHarga = cart.reduce((sum, item) => sum + (item.harga * item.qty), 0);
+
+    // Render Nota/Invoice Digital Dine-In ke Layar
+    let checkoutBox = document.getElementById("checkout-box");
+    checkoutBox.innerHTML = `
+        <div style="text-align: center; color: #ff7b00; margin-bottom: 20px;">
+            <i data-feather="coffee" style="width:50px; height:50px; stroke: #ff7b00;"></i>
+            <h2>Pesanan Diterima Burjo!</h2>
+            <p style="color: #666; font-size: 0.9rem; margin-top: 5px;">Silakan tunggu di meja, makananmu sedang diproses.</p>
+        </div>
+        
+        <div style="background: #fdf7f2; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+            <p><strong>Atas Nama:</strong> ${nama}</p>
+            <p><strong>Nomor Meja:</strong> <span style="background: #ff7b00; color: white; padding: 2px 8px; border-radius: 5px; font-weight: bold;">Meja ${meja}</span></p>
+            <p><strong>Catatan:</strong> ${catatan}</p>
+        </div>
+
+        <hr style="margin:15px 0; border: 1px dashed #ccc;">
+        <h3>Menu yang Dipesan:</h3>
+        <ul style="margin: 10px 0 10px 20px; text-align: left; line-height: 1.6;">
+            ${cart.map(item => `<li><strong>${item.nama}</strong> (x${item.qty}) - Rp ${(item.harga * item.qty).toLocaleString('id-ID')}</li>`).join('')}
+        </ul>
+        
+        <hr style="margin:15px 0; border: 1px dashed #ccc;">
+        <h3 style="display: flex; justify-content: space-between; color:#ff7b00;">
+            <span>Total Bayar:</span> 
+            <span>Rp ${totalHarga.toLocaleString('id-ID')}</span>
+        </h3>
+        
+        <p style="font-size: 0.8rem; color: #888; text-align: center; margin: 20px 0 10px 0;">
+            *Pembayaran dilakukan langsung ke kasir setelah selesai makan atau saat makanan datang.
+        </p>
+        
+        <button class="btn" onclick="clearAndReturn()" style="width: 100%;">Kembali ke Beranda</button>
+    `;
+    
+    feather.replace();
+}
+
+function clearAndReturn() {
+    // Kosongkan keranjang belanjaan setelah sukses memesan
+    localStorage.removeItem("cart");
+    window.location.href = "index.html";
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,408 @@
+/* ===== RESET & BASE ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+body {
+    background-color: #f6f7fb;
+    color: #232323;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+a {
+    text-decoration: none;
+}
+
+/* ===== UTILITIES / GLOBAL BUTTON ===== */
+.btn {
+    padding: 12px 25px;
+    background: #232323;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    display: inline-block; /* KUNCI: Supaya tombol tidak melar melebar */
+    width: fit-content;    /* KUNCI: Memaksa tombol hanya selebar teksnya */
+    transition: 0.3s;
+    text-align: center;
+}
+.btn:hover {
+    transform: scale(1.05);
+    background: #444;
+}
+.btn-danger {
+    background: #dc3545;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 50px;
+    background: #ff7b00;
+    color: #fff;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+.nav-logo {
+    font-size: 1.7rem;
+    font-weight: bold;
+}
+.nav-menu {
+    list-style: none;
+    display: flex;
+    gap: 35px;
+}
+.nav-menu a {
+    color: white;
+    font-weight: 500;
+    font-size: 1.05rem;
+}
+.nav-menu a.active, 
+.nav-menu a:hover {
+    color: #232323;
+}
+.nav-right {
+    position: relative;
+}
+.cart-icon {
+    color: white;
+    position: relative;
+    font-size: 1.3rem;
+}
+#cart-count {
+    background: #232323;
+    padding: 2px 7px;
+    border-radius: 50%;
+    font-size: 0.7rem;
+    position: absolute;
+    top: -6px;
+    right: -10px;
+    color: white;
+}
+
+/* ===== HERO (DUA KOLOM + ANIMASI) ===== */
+.hero {
+    height: 100vh;
+    background: linear-gradient(to right, #ffc36e, #ff7b00);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 50px;
+    color: #232323;
+    margin-top: 60px;
+    overflow: hidden;
+}
+.hero-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.hero h1 {
+    font-size: 3.5rem;
+    line-height: 1.1;
+    margin-bottom: 15px;
+}
+.hero h1 span {
+    color: #fff;
+}
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 25px;
+    max-width: 500px;
+}
+.hero-image {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.hero-image img {
+    width: 100%;
+    max-width: 420px;
+    filter: drop-shadow(0 20px 30px rgba(0,0,0,0.2));
+    animation: floating 3s ease-in-out infinite;
+}
+
+/* Animasi Naik Turun Gambar Hero */
+@keyframes floating {
+    0%, 100% { 
+        transform: translateY(0); 
+    }
+    50% { 
+        transform: translateY(-15px); 
+    }
+}
+
+/* ===== LAYOUT CONTAINER & GRID ===== */
+.favorites, 
+.main-content {
+    padding: 40px 50px;
+    max-width: 1200px;
+    margin: 80px auto 40px auto;
+    width: 100%;
+}
+.favorites h2, 
+.page-title {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2rem;
+}
+
+/* Untuk menaruh tombol Lihat Semua Menu di tengah bawah halaman */
+.see-menu {
+    display: block;
+    margin: 30px auto 0 auto;
+}
+
+/* ===== MENU CARDS (GOFOOD STYLE) ===== */
+.menu-grid, .fav-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 25px;
+}
+.menu-item {
+    background: white;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.06);
+    transition: all 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.menu-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 22px rgba(0,0,0,0.12);
+}
+.menu-item img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+}
+.menu-item h3 {
+    font-size: 1.15rem;
+    padding: 15px 15px 5px 15px;
+    text-align: left;
+}
+.menu-item p.desc {
+    font-size: 0.85rem;
+    color: #666;
+    padding: 0 15px 10px 15px;
+    text-align: left;
+}
+.menu-item p.price {
+    color: #ff7b00;
+    font-weight: bold;
+    padding: 0 15px 15px 15px;
+    text-align: left;
+}
+.menu-item button {
+    margin: 0 15px 15px 15px;
+    padding: 10px;
+    border: none;
+    background: #ff7b00;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.menu-header{
+    margin-top: 50px;
+    padding-top: 30px;
+}
+.menu-item button:hover {
+    background: #e86f00;
+}
+
+/* ===== CATEGORY TABS ===== */
+.menu-tabs {
+    display: flex;
+    justify-content: center;
+    margin: 25px 0 40px 0;
+    gap: 12px;
+}
+.tab {
+    padding: 10px 20px;
+    border: none;
+    background: #ffe4c5;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+}
+.tab.active, 
+.tab:hover {
+    background: #ff7b00;
+    color: white;
+}
+
+/* ===== CART & CHECKOUT CONTAINER ===== */
+.cart-wrapper, 
+.form-container {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    max-width: 700px;
+    margin: 0 auto;
+}
+.cart-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+}
+.qty-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 5px;
+}
+.qty-btn {
+    background: #ff7b00;
+    color: white;
+    border: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* ===== FORM ELEMENTS ===== */
+.form-group {
+    margin-bottom: 15px;
+}
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+.form-group input, 
+.form-group select, 
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+}
+
+/* ===== BACKEND ADMIN PANEL ===== */
+.admin-container {
+    display: flex;
+    min-height: 100vh;
+}
+.sidebar {
+    width: 250px;
+    background: #232323;
+    color: white;
+    padding: 20px;
+}
+.sidebar h2 {
+    color: #ff7b00;
+    margin-bottom: 30px;
+    text-align: center;
+}
+.sidebar ul {
+    list-style: none;
+}
+.sidebar ul li {
+    margin-bottom: 15px;
+}
+.sidebar ul li a {
+    color: white;
+    display: block;
+    padding: 10px;
+    border-radius: 5px;
+}
+.sidebar ul li a:hover, 
+.sidebar ul li a.active {
+    background: #ff7b00;
+}
+.admin-content {
+    flex: 1;
+    padding: 40px;
+    background: #f6f7fb;
+}
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+.admin-table th, 
+.admin-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+.admin-table th {
+    background: #ff7b00;
+    color: white;
+}
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+.card-stat {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    border-left: 5px solid #ff7b00;
+}
+
+/* ===== FOOTER ===== */
+footer {
+    background: #ff7b00;
+    padding: 15px;
+    text-align: center;
+    color: white;
+    margin-top: auto;
+}
+
+/* ===== RESPONSIVE MOBILE ===== */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 15px 20px;
+    }
+    .nav-menu {
+        gap: 15px;
+    }
+    .hero {
+        flex-direction: column;
+        height: auto;
+        padding: 50px 20px;
+        text-align: center;
+    }
+    .hero-content {
+        align-items: center;
+        margin-bottom: 30px;
+    }
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+    .hero-image img {
+        max-width: 280px;
+    }
+    .favorites, 
+    .main-content {
+        padding: 20px;
+    }
+}

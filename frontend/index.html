@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BurjoGo - Home</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-logo">BurjoGo</div>
+
+    <ul class="nav-menu">
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="menu.html">Menu</a></li>
+        <li><a href="cart.html">Keranjang</a></li>
+    </ul>
+
+    <div class="nav-right">
+        <a href="cart.html" class="cart-icon">
+            <i data-feather="shopping-cart"></i>
+            <span id="cart-count">0</span>
+        </a>
+    </div>
+</nav>
+
+<header class="hero">
+    <div class="hero-content">
+        <h1>Selamat Datang di <span>BurjoGo</span></h1>
+        <p>Solusi kuliner cepat, bersahabat, dan hemat ramah kantong mahasiswa!</p>
+        <a href="menu.html" class="btn">Pesan Sekarang</a>
+    </div>
+
+    <div class="hero-image">
+        <img src="https://i.ibb.co/VB4zDbk/migor.png" alt="BurjoGo Hero">
+    </div>
+</header>
+
+<section class="favorites">
+    <h2>Menu Favorit</h2>
+
+    <div class="fav-list" id="preview-menu"></div>
+
+    <a href="menu.html" class="btn see-menu">Lihat Semua Menu</a>
+</section>
+
+<footer>
+    <p>© 2026 BurjoGo - Sistem Pemesanan Online</p>
+</footer>
+
+<script>
+feather.replace();
+
+// CART COUNT
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+document.getElementById("cart-count").innerText = cart.length;
+
+// LOAD PREVIEW MENU
+fetch("data.json")
+.then(res => res.json())
+.then(data => {
+    let container = document.getElementById("preview-menu");
+    let preview = data.menus.slice(0, 3); // Mengambil 3 menu teratas
+
+    container.innerHTML = "";
+    preview.forEach(menu => {
+        container.innerHTML += `
+            <div class="menu-item">
+                <img src="${menu.gambar}">
+                <h3>${menu.nama}</h3>
+                <p class="price">Rp ${menu.harga.toLocaleString('id-ID')}</p>
+                <button onclick="addToCart(${JSON.stringify(menu).replace(/"/g, '&quot;')})">Tambah</button>
+            </div>
+        `;
+    });
+});
+</script>
+
+</body>
+</html>
