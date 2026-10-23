@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BurjoGo - Konfirmasi Pesanan</title>
+    <link rel="stylesheet" href="style.css?v=1">
+    <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-logo">BurjoGo</div>
+    <ul class="nav-menu">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="menu.html">Menu</a></li>
+        <li><a href="cart.html">Keranjang</a></li>
+    </ul>
+    <div class="nav-right">
+        <a href="cart.html" class="cart-icon">
+            <i data-feather="shopping-cart"></i>
+            <span id="cart-count">0</span>
+        </a>
+    </div>
+</nav>
+
+<main class="main-content" style="margin-top: 120px;">
+    <h1 class="page-title" style="text-align: center; margin-bottom: 10px;">Konfirmasi Pesanan Meja</h1>
+    <p style="text-align: center; color: #666; margin-bottom: 30px;">Silakan isi identitas meja kamu untuk menyelesaikan pesanan</p>
+
+    <div class="form-container" style="max-width: 600px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+        
+        <form id="checkoutForm" onsubmit="kirimPesanan(event)">
+            
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #232323;">Nama Pelanggan</label>
+                <input type="text" id="nama_customer" required placeholder=" Masukan Nama Anda" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box;">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #232323;">Nomor Meja</label>
+                <select id="no_meja" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; background: #fff;">
+                    <option value="" disabled selected>-- Pilih Nomor Meja --</option>
+                    <option value="Meja 01">Meja 01</option>
+                    <option value="Meja 02">Meja 02</option>
+                    <option value="Meja 03">Meja 03</option>
+                    <option value="Meja 04">Meja 04</option>
+                    <option value="Meja 05">Meja 05</option>
+                    <option value="Meja 06">Meja 06</option>
+                    <option value="Meja 07">Meja 07</option>
+                    <option value="Meja 08">Meja 08</option>
+                    <option value="Meja 09">Meja 09</option>
+                    <option value="Meja 10">Meja 10</option>
+                    <option value="Meja 11">Meja 11</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 25px;">
+                <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #232323;">Catatan Tambahan (Opsional)</label>
+                <textarea id="catatan" rows="3" placeholder="Contoh: Magelangannya pedas mampus, es tehnya gak pakai gula..." style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; resize: vertical;"></textarea>
+            </div>
+
+            <div style="border-top: 2px dashed #eee; padding-top: 20px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 1.1rem; font-weight: 600; color: #555;">Total Pembayaran:</span>
+                <span id="total-tagihan" style="font-size: 1.5rem; font-weight: bold; color: #ff7b00;">Rp 0</span>
+            </div>
+
+            <button type="submit" class="btn" style="width: 100%; padding: 14px; font-size: 1.1rem; background: #ff7b00; color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                Pesan Sekarang & Bayar di Kasir
+            </button>
+            
+        </form>
+    </div>
+</main>
+
+<footer>
+    <p>© 2026 BurjoGo - Sistem Pemesanan Online</p>
+</footer>
+
+<script>
+// Jalankan ikon feather
+feather.replace();
+
+// Ambil data keranjang belanja saat ini
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+document.getElementById("cart-count").innerText = cart.length;
+
+// Hitung total tagihan belanjaan untuk ditampilkan di form checkout
+let totalBayar = cart.reduce((sum, item) => sum + (item.harga * item.qty), 0);
+document.getElementById("total-tagihan").innerText = "Rp " + totalBayar.toLocaleString('id-ID');
+
+
+// ============================================================
+// FUNGSI UTAMA: TOAST MODAL GEDE DI TENGAH LAYAR (ANTI-ALERT)
+// ============================================================
+function showCheckoutToast(judul, pesan, tipe = "sukses") {
+    // Cari apakah ada toast aktif sebelumnya, jika ada bersihkan
+    let existingModal = document.getElementById('checkout-toast-overlay');
+    if (existingModal) existingModal.remove();
+
+    // Tentukan emoji berdasarkan status sukses/gagal
+    let emoji = (tipe === "sukses") ? "🎉" : "❌";
+
+    // Buat lapisan background gelap transparan
+    const overlay = document.createElement('div');
+    overlay.id = 'checkout-toast-overlay';
+    
+    // Susun kotak box toast gedenya
+    overlay.innerHTML = `
+        <div class="checkout-toast-box">
+            <div class="checkout-toast-icon">${emoji}</div>
+            <h2>${judul}</h2>
+            <p>${pesan}</p>
+            <button class="btn" id="btn-toast-oke" style="margin: 0 auto; display: block; background: #ff7b00;">Oke, Siap!</button>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    // Atur aksi tombol Oke ketika diklik
+    document.getElementById('btn-toast-oke').onclick = function() {
+        overlay.remove();
+        if (tipe === "sukses") {
+            window.location.href = "index.html"; // Kalau sukses arahkan ke Beranda
+        }
+    };
+}
+
+
+// FUNGSI JAVASCRIPT UNTUK MENEGOSIASIKAN DATA KE PHP
+function kirimPesanan(event) {
+    event.preventDefault(); // Mencegah reload halaman otomatis saat form disubmit
+    
+    // Ambil data dari elemen inputan form HTML
+    let nama = document.getElementById("nama_customer").value;
+    let meja = document.getElementById("no_meja").value;
+    let catatan = document.getElementById("catatan").value;
+
+    // Pengaman: Jika keranjang belanja kosong, panggil toast gagal
+    if (cart.length === 0) {
+        showCheckoutToast("Keranjang Kosong!", "Keranjang belanja kamu kosong, Aa. Silakan pilih menu dulu!", "gagal");
+        setTimeout(() => { window.location.href = "menu.html"; }, 2500);
+        return;
+    }
+
+    // Susun objek data pesanan terstruktur untuk dikirimkan
+    let dataPesanan = {
+        nama: nama,
+        meja: meja,
+        catatan: catatan,
+        total: totalBayar,
+        items: cart
+    };
+
+    // Tembak data JSON menggunakan Fetch API ke backend simpan_pesanan.php
+    fetch("simpan_pesanan.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(dataPesanan)
+    })
+    .then(res => {
+        if (!res.ok) {
+            throw new Error("Koneksi jaringan server bermasalah.");
+        }
+        return res.json();
+    })
+    .then(response => {
+        if (response.status === "success") {
+            // Hapus isi keranjang belanja lokal dari localStorage pembeli
+            localStorage.removeItem("cart"); 
+            
+            // PANGGIL TOAST GEDE DI SINI SEBAGAI PENGGANTI ALERT LAMA
+            showCheckoutToast(
+                "Pesanan Berhasil!", 
+                `Halo <strong>${nama}</strong>, pesananmu untuk <strong>${meja}</strong> berhasil dikirim ke dapur. Silakan konfirmasi pembayaran ke kasir ya!`,
+                "sukses"
+            );
+        } else {
+            // Toast Gede versi gagal (Database Bermasalah)
+            showCheckoutToast(
+                "Gagal Menyimpan Pesanan", 
+                "Terjadi masalah pada database server: " + response.message,
+                "gagal"
+            );
+        }
+    })
+    .catch(err => {
+        console.error("Terjadi Kegagalan Transaksi:", err);
+        // Toast Gede versi gagal (Jaringan/Server Mati)
+        showCheckoutToast(
+            "Koneksi Bermasalah", 
+            "Gagal menghubungi server backend. Pastikan Apache/XAMPP kamu menyala, Aa!",
+            "gagal"
+        );
+    });
+}
+</script>
+
+</body>
+</html>

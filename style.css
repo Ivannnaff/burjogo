@@ -10,7 +10,7 @@ body {
     color: #232323;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    min-height: 100vh; /* KUNCI: Memaksa tinggi body minimal se-layar penuh */
 }
 a {
     text-decoration: none;
@@ -129,7 +129,7 @@ a {
 }
 .hero-image img {
     width: 100%;
-    max-width: 420px;
+    max-width: 550px;
     filter: drop-shadow(0 20px 30px rgba(0,0,0,0.2));
     animation: floating 3s ease-in-out infinite;
 }
@@ -147,10 +147,12 @@ a {
 /* ===== LAYOUT CONTAINER & GRID ===== */
 .favorites, 
 .main-content {
-    padding: 40px 50px;
+    padding: 30px 50px;
     max-width: 1200px;
-    margin: 80px auto 40px auto;
+    margin: 20px auto 40px auto; 
     width: 100%;
+    box-sizing: border-box;
+    flex: 1; /* KUNCI UTAMA FIX STICKY FOOTER: Mengisi ruang kosong agar footer terdorong ke bawah layar */
 }
 .favorites h2, 
 .page-title {
@@ -163,6 +165,22 @@ a {
 .see-menu {
     display: block;
     margin: 30px auto 0 auto;
+}
+
+/* ===== MENU HEADER ===== */
+.menu-header {
+    margin-top: 50px;      /* DIBERIKAN FIX: Ditambah margin top agar judul menu tidak tertabrak/tertutup navbar fixed */
+    padding-top: 10px;     
+    text-align: center;    
+}
+.menu-header h1 {
+    font-size: 2.2rem;
+    color: #232323;
+    margin-bottom: 5px;
+}
+.menu-header p {
+    font-size: 1rem;
+    color: #666;
 }
 
 /* ===== MENU CARDS (GOFOOD STYLE) ===== */
@@ -198,7 +216,7 @@ a {
 .menu-item p.desc {
     font-size: 0.85rem;
     color: #666;
-    padding: 0 15px 10px 15px;
+    padding: 10px 15px 10px 15px;
     text-align: left;
 }
 .menu-item p.price {
@@ -217,10 +235,6 @@ a {
     cursor: pointer;
     font-weight: bold;
 }
-.menu-header{
-    margin-top: 50px;
-    padding-top: 30px;
-}
 .menu-item button:hover {
     background: #e86f00;
 }
@@ -229,19 +243,21 @@ a {
 .menu-tabs {
     display: flex;
     justify-content: center;
-    margin: 25px 0 40px 0;
+    margin: 20px 0 40px 0; 
     gap: 12px;
 }
 .tab {
     padding: 10px 20px;
     border: none;
-    background: #ffe4c5;
+    background: #ffe4c5; 
+    color: #232323;
     border-radius: 10px;
     cursor: pointer;
     font-weight: 600;
+    transition: 0.2s ease;
 }
-.tab.active, 
-.tab:hover {
+.tab:hover,
+.tab.active {
     background: #ff7b00;
     color: white;
 }
@@ -254,7 +270,7 @@ a {
     border-radius: 15px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.05);
     max-width: 700px;
-    margin: 0 auto;
+    margin: 80px auto 40px auto; /* DIEDIT: Ditambah margin atas 80px agar isi halaman keranjang tidak ketutup navbar */
 }
 .cart-card {
     display: flex;
@@ -374,7 +390,8 @@ footer {
     padding: 15px;
     text-align: center;
     color: white;
-    margin-top: auto;
+    margin-top: auto; /* KUNCI FIX: Menggunakan auto agar otomatis menempel pas di dasar terbawah */
+    width: 100%;
 }
 
 /* ===== RESPONSIVE MOBILE ===== */
@@ -404,5 +421,137 @@ footer {
     .favorites, 
     .main-content {
         padding: 20px;
+    }
+}
+
+/* ===== CONTAINER TOAST NOTIFICATION ===== */
+#toast-container {
+    position: fixed;
+    top: 100px; 
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* ===== KOTAK TOAST INDIVIDUAL ===== */
+.toast-item {
+    background: #232323;
+    color: white;
+    padding: 14px 22px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    border-left: 5px solid #ff7b00; 
+    min-width: 280px;
+    animation: slideInToast 0.3s ease forwards, fadeOutToast 0.3s ease 2.7s forwards;
+}
+
+/* ===== ANIMASI TOAST ===== */
+@keyframes slideInToast {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+@keyframes fadeOutToast {
+    from { transform: translateY(0); opacity: 1; }
+    to { transform: translateY(-15px); opacity: 0; }
+}
+/* ============================================================
+   ===== TOAST MODAL GEDE DI TENGAH LAYAR (CHECKOUT) =====
+   ============================================================ */
+
+/* 1. Background Blur Transparan di Belakang Pop-Up */
+#checkout-toast-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.55); /* Memberi efek gelap transparan */
+    backdrop-filter: blur(5px);     /* Membuat background belakang blur estetik */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000; /* KUNCI: Harus di atas 1000 agar menimpa navbar fixed */
+    animation: fadeInOverlay 0.3s ease forwards;
+}
+
+/* 2. Kotak Putih Toast Gedenya */
+.checkout-toast-box {
+    background: #ffffff;
+    padding: 40px 30px;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    max-width: 450px;
+    width: 90%; /* Biar otomatis mengecil pas dibuka di HP (responsif) */
+    box-sizing: border-box;
+    animation: popUpBox 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* 3. Icon Emoji Gede di Atas */
+.checkout-toast-icon {
+    font-size: 4.5rem;
+    margin-bottom: 15px;
+    display: block;
+}
+
+/* 4. Judul Toast Gede */
+.checkout-toast-box h2 {
+    font-size: 1.8rem;
+    color: #232323;
+    margin-bottom: 12px;
+    font-weight: bold;
+}
+
+/* 5. Kalimat Deskripsi */
+.checkout-toast-box p {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 25px;
+    line-height: 1.6;
+}
+
+/* 6. Tombol Oke */
+.checkout-toast-box .btn {
+    margin: 0 auto !important;
+    display: block !important;
+    background: #ff7b00;
+    padding: 12px 40px;
+    font-size: 1rem;
+    border-radius: 10px;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    transition: 0.2s ease;
+}
+
+.checkout-toast-box .btn:hover {
+    background: #e86f00;
+    transform: scale(1.05);
+}
+
+/* ============================================================
+   ===== KEYFRAMES ANIMASI (BIAR MUNCULNYA HALUS & MANTUL) =====
+   ============================================================ */
+@keyframes fadeInOverlay {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes popUpBox {
+    from { 
+        transform: scale(0.6); 
+        opacity: 0; 
+    }
+    to { 
+        transform: scale(1); 
+        opacity: 1; 
     }
 }

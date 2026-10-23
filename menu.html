@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BurjoGo - Daftar Menu</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-logo">BurjoGo</div>
+    <ul class="nav-menu">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="menu.html" class="active">Menu</a></li>
+        <li><a href="cart.html">Keranjang</a></li>
+    </ul>
+    <div class="nav-right">
+        <a href="cart.html" class="cart-icon">
+            <i data-feather="shopping-cart"></i>
+            <span id="cart-count">0</span>
+        </a>
+    </div>
+</nav>
+
+<main class="main-content">
+    
+    <div class="menu-header" style="margin-top:25px;">
+        <h1>Silakan pilih Menu favoritmu</h1>
+    </div>
+
+    <div class="menu-tabs">
+        <button class="tab active" onclick="filterMenu('all')">Semua</button>
+        <button class="tab" onclick="filterMenu('makanan')">Makanan</button>
+        <button class="tab" onclick="filterMenu('minuman')">Minuman</button>
+        <button class="tab" onclick="filterMenu('snack')">Snack</button>
+    </div>
+
+    <div class="menu-grid" id="menu-container"></div>
+
+</main>
+
+<footer>
+    <p>© 2026 BurjoGo - Sistem Pemesanan Online</p>
+</footer>
+
+<div id="toast-container"></div>
+
+<script>
+// Aktifkan ikon feather
+feather.replace();
+
+// Ambil data keranjang belanja lokal
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+document.getElementById("cart-count").innerText = cart.length;
+
+// Tempat menampung data mentah dari JSON secara global
+let semuaMenu = [];
+
+// AMBIL DATA DARI DATA.JSON
+fetch("data.json")
+    .then(res => {
+        if (!res.ok) throw new Error("Gagal mengambil data JSON");
+        return res.json();
+    })
+    .then(data => {
+        semuaMenu = data.menus || [];
+        tampilkanMenu(semuaMenu); 
+    })
+    .catch(err => {
+        console.error("Error:", err);
+        document.getElementById("menu-container").innerHTML = 
+            `<p style="text-align:center; color:red; grid-column:1/-1;">Gagal memuat daftar menu.</p>`;
+    });
+
+// FUNGSI UNTUK MERENDER KARTU MENU KE HTML
+function tampilkanMenu(daftarMenu) {
+    let container = document.getElementById("menu-container");
+    container.innerHTML = "";
+
+    if (daftarMenu.length === 0) {
+        container.innerHTML = `<p style="text-align:center; color:#888; grid-column:1/-1;">Menu tidak ditemukan.</p>`;
+        return;
+    }
+
+    daftarMenu.forEach(menu => {
+        // KUNCI FIX 2: Tag <div id="toast-container"></div> di dalam loop ini sudah DIHAPUS
+        container.innerHTML += `
+            <div class="menu-item">
+                <img src="${menu.gambar}" onerror="this.src='https://placehold.co/240x160?text=No+Image'">
+                <div class="menu-item-info">
+                    <h3>${menu.nama}</h3>
+                    <p class="desc">${menu.deskripsi}</p>
+                    <p class="price">Rp ${menu.harga.toLocaleString('id-ID')}</p>
+                    <button onclick="addToCart(${menu.id}, '${menu.nama}', ${menu.harga})">+ Tambah ke Cart</button>
+                </div>
+            </div>
+        `;
+    });
+}
+
+// FUNGSI PILAH / FILTER KATEGORI MENU
+function filterMenu(kategori) {
+    let tombols = document.querySelectorAll(".tab");
+    tombols.forEach(btn => btn.classList.remove("active"));
+    event.currentTarget.classList.add("active");
+
+    if (kategori === "all") {
+        tampilkanMenu(semuaMenu);
+    } else {
+        let hasilFilter = semuaMenu.filter(menu => menu.kategori === kategori);
+        tampilkanMenu(hasilFilter);
+    }
+}
+
+// FUNGSI ADDTOCART
+function addToCart(id, nama, harga) {
+    let item = cart.find(i => i.id === id);
+    if (item) {
+        item.qty++;
+    } else {
+        cart.push({ id, nama, harga, qty: 1 });
+    }
+    localStorage.setItem("cart", JSON.stringify(cart));
+    document.getElementById("cart-count").innerText = cart.length;
+    
+    // Panggil toast
+    showToast(`${nama} berhasil dimasukkan ke keranjang!`);
+}
+
+// FUNGSI UTAMA PEMBUAT TOAST
+function showToast(pesan) {
+    let container = document.getElementById('toast-container');
+    
+    // KUNCI FIX 3: Menggunakan insertAdjacentElement agar container otomatis dibuat di paling luar jika tidak sengaja hilang
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        document.body.insertAdjacentElement('beforeend', container);
+    }
+    
+    // Bikin kotak toast baru
+    const toast = document.createElement('div');
+    toast.classList.add('toast-item');
+    toast.innerHTML = `🛒 <span>${pesan}</span>`;
+    
+    // Masukkan kotak ke dalam wadah utama fixed screen
+    container.appendChild(toast);
+    
+    // Hapus otomatis elemen setelah 3 detik
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
+</script>
+
+</body>
+</html>
